@@ -37,3 +37,14 @@ dependencies, tools, libraries, etc.
   - The container's main processes are shut down gracefully.
 - Killed:
   - The container's main processes are shut down abruptly.
+
+### Example
+
+- get nginx docker image: `docker pull nginx`  
+- run nginx image in background: `docker run -d -p 80:80 nginx`  
+- copy html file to display in browser: `docker cp [local file path] [container id]:[file name]`  
+- log into docker container: `docker exec -it [container id] bash`  
+- move html file into correct location: `mv [file name] /usr/share/nginx/html/[file name]`  
+- to exit: `exit`
+- check if it works by typing `localhost` into browser
+- create docker image: `docker commit nginx new_nginx`
