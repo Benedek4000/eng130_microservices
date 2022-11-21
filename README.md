@@ -47,4 +47,4 @@ dependencies, tools, libraries, etc.
 - move html file into correct location: `mv [file name] /usr/share/nginx/html/[file name]`  
 - to exit: `exit`
 - check if it works by typing `localhost` into browser
-- create docker image: `docker commit nginx new_nginx`
+- create docker image: `docker commit nginx [username]/new_nginx`
