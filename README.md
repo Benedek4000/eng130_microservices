@@ -179,3 +179,30 @@ CMD ["nginx", "-g", "daemon off;"]
 build new image: `docker build -t [username]/[image name] .`  
 test image by running it: `docker run -d -p [port]:[port] [username]/[image name]`  
 push image to docker hub: `docker push [username]/[image name]`
+
+### node app
+
+to create a node app image, follow these steps:
+
+- create `node_app` folder. everything will be inside this folder
+- copy `app` and `environment` folders into `node_app` folder
+- create `Dockerfile`:
+```yaml
+FROM nginx
+LABEL MAINTAINER=eng130_benedek
+COPY app /home/
+COPY environment /home/
+EXPOSE 80
+EXPOSE 3000
+RUN apt-get update
+RUN apt-get install -y
+RUN apt-get install software-properties-common -y
+RUN apt-get install npm -y
+CMD ["nginx", "-g", "daemon off;"]
+WORKDIR /home/app
+RUN npm install
+CMD ["npm", "start"]
+```
+- build image: `docker build -t benedek4000/eng130-benedek-node-app .`
+- run image to test it: `docker run -d -p 80:3000 benedek4000/eng130-benedek-node-app`
+- push image to docker hub: `docker push benedek4000/eng130-benedek-node-app`
