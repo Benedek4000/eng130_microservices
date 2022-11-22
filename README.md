@@ -147,3 +147,35 @@ dependencies, tools, libraries, etc.
 - to exit: `exit`
 - check if it works by typing `localhost` into browser
 - create docker image: `docker commit nginx [username]/new_nginx`
+
+### Create new docker image using Dockerfile
+
+- use already existing image
+- modify it
+- save it
+- push it to docker hub
+
+define new image from already existing image:
+```yaml
+# docker pull nginx
+FROM nginx
+
+# who is creating this
+LABEL MAINTAINER=eng130_benedek
+
+# copy index.html
+COPY index.html /usr/share/nginx/html/
+
+# docker run -d -p 80:80 name
+
+
+# port number
+EXPOSE 80
+
+#launch the server
+CMD ["nginx", "-g", "daemon off;"]
+```
+
+build new image: `docker build -t [username]/[image name] .`  
+test image by running it: `docker run -d -p [port]:[port] [username]/[image name]`  
+push image to docker hub: `docker push [username]/[image name]`
