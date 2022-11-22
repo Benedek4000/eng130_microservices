@@ -1,0 +1,15 @@
+services:
+  db:
+    image: mongo
+    ports:
+      - "27017:27017"
+
+  app:
+    build: ./app/app
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - DB_HOST=mongodb://db:27017/posts
+    depends_on:
+      - db
