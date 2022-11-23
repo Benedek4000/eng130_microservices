@@ -1,0 +1,19 @@
+services:
+  db:
+    image: mongo-express
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./db/mongod.conf:/etc/mongod.conf
+
+  app:
+    build: ./app
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - DB_HOST=mongodb://localhost:27017/posts
+    command: "node seeds/seed.js"
+    depends_on:
+      - db

@@ -206,3 +206,112 @@ CMD ["npm", "start"]
 - build image: `docker build -t benedek4000/eng130-benedek-node-app .`
 - run image to test it: `docker run -d -p 80:3000 benedek4000/eng130-benedek-node-app`
 - push image to docker hub: `docker push benedek4000/eng130-benedek-node-app`
+
+### node app with db using dockerfile
+
+to create the node app with the database, follow these steps:
+
+- in app folder, have:
+  - app files
+  - dockerfile:
+```yaml
+FROM node as app
+
+WORKDIR /usr/src/app
+
+COPY package*.json ./
+
+RUN npm install -g npm@7.20.6
+
+COPY . .
+
+EXPOSE 3000
+
+CMD ["node", "app.js"]
+
+
+
+# Production ready image
+
+FROM node:alpine
+
+WORKDIR /usr/src/app
+
+COPY package*.json ./
+
+RUN npm install -g npm@7.20.6
+
+COPY --from=app /usr/src/app /usr/src/app
+
+EXPOSE 3000
+
+CMD ["node", "app.js"]
+```
+
+- in db folder, have:
+  - mongod.conf:
+```yaml
+# for documentation of all options, see:
+#   http://docs.mongodb.org/manual/reference/configuration-options/
+
+# Where and how to store data.
+storage:
+  dbPath: /var/lib/mongodb
+  journal:
+    enabled: true
+#  engine:
+#  mmapv1:
+#  wiredTiger:
+
+# where to write logging data.
+systemLog:
+  destination: file
+  logAppend: true
+  path: /var/log/mongodb/mongod.log
+
+# network interfaces
+net:
+  port: 27017
+  bindIp: 0.0.0.0
+
+
+#processManagement:
+
+#security:
+
+#operationProfiling:
+
+#replication:
+
+#sharding:
+
+## Enterprise-Only Options:
+
+#auditLog: 
+```
+
+- outside the app and the db folder, have:
+  - docker-compose.yml:
+```yaml
+services:
+  db:
+    image: mongo-express
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./db/mongod.conf:/etc/mongod.conf
+
+  app:
+    build: ./app
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - DB_HOST=mongodb://localhost:27017/posts
+    command: "node seeds/seed.js"
+    depends_on:
+      - db
+```
+
+- in the main folder, run `docker-compose up`
