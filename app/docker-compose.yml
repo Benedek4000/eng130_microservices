@@ -1,11 +1,10 @@
+version: "3.9"
 services:
   db:
-    image: mongo-express
-    container_name: mongo
+    image: mongo
+    build: .db
     ports:
       - "27017:27017"
-    volumes:
-      - ./db/mongod.conf:/etc/mongod.conf
 
   app:
     build: ./app
@@ -13,7 +12,6 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - DB_HOST=mongodb://localhost:27017/posts
-    command: "node seeds/seed.js"
+      - DB_HOST=mongodb://db:27017/posts
     depends_on:
       - db
